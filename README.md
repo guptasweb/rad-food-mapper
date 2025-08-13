@@ -78,7 +78,7 @@ npm --prefix client run test:e2e:open   # Cypress UI runner
 
 - Direct integration with Socrata SODA API (no local DB) keeps data current and simplifies ops.
 - Text matching via `upper(field) like upper('%…%')` with quote escaping.
-- Nearest uses Socrata geospatial `distance_in_meters()` ordering (precise) or integer-degree bands when `coarse=true`.
+- Nearest uses Socrata geospatial `distance_in_meters()` ordering (precise)
 - Swagger UI serves `openapi.json` at `/docs` to document the API.
 
 ## Security
@@ -90,21 +90,20 @@ npm --prefix client run test:e2e:open   # Cypress UI runner
 
 - No database: faster to build and keeps data fresh, but relies on upstream latency/availability and can hit rate limits.
 - Direct LIKE filters: simple and explainable, but less performant and fuzzy than full-text search.
-- Socrata geo vs Google Maps: I chose Socrata geospatial math (`within_box`/SoQL) over Google Maps Distance Matrix because it’s free (no key/billing), lower latency (single upstream), simpler to test (fewer external calls), and sufficient when “nearest” means geometric proximity. Google would be preferable if ranking by travel time/traffic is required, at the cost of added complexity, quotas, and latency.
+- Socrata geo vs Google Maps: I chose Socrata geospatial math (`within_box`/SoQL) over Google Maps Distance Matrix because has lower latency (single upstream), simpler to test (fewer external calls), and sufficient when “nearest” means geometric proximity. Google would be preferable if ranking by travel time/traffic is required, at the cost of added complexity, quotas, and latency.
 - Cypress tests stub only where needed: keeps E2E close to real, but can be flaky due to upstream; unit tests isolate logic.
 - Frontend stack (React + TypeScript): broad ecosystem, reusable components, type safety, and fast local DX via Vite. Alternatives like Vue/Svelte are great, but React’s library support (MUI, Testing Library, Cypress docs) and team familiarity reduce risk and delivery time.
 - Backend stack (Express + Node): minimal runtime footprint, easy HTTP wiring, and native TypeScript support. Rails offers strong conventions, scaffolding, and batteries-included features (ActiveRecord), but for a small API proxy against a hosted dataset, Express is lighter, needs fewer moving parts, and aligns with the TS frontend.
 
 ## Critique / Future work
-  - Robust rate limiting/throttling and observability (metrics, tracing)
   - Comprehensive E2E stubbing of all API paths and visual regression tests
   - Geolocation via Google Maps (Places Autocomplete/Geocoding) to power latitude/longitude lookup
   - Pagination (API and UI) for large result sets and better perceived performance
+  - Typeahead/autocomplete inputs with debounced queries and dynamic results display while typing
 
 
 - What would you have done differently with more time?
   - Add React Query for client-side caching/retries and simplify form fetch logic
-  - Introduce schema validation (zod/Joi) at controllers and strict response typing
   - Implement paging and sortable columns with a virtualized grid
   - Add map visualization and clustering; deep links and sharable URLs
 
