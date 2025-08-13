@@ -1,0 +1,18 @@
+
+[
+  {
+    "applicant": "TASTY TACOS",
+    "status": "APPROVED",
+    "address": "123 MARKET ST",
+    "latitude": "37.7901",
+    "longitude": "-122.4010"
+  },
+  {
+    "applicant": "COFFEE CART",
+    "status": "APPROVED",
+    "address": "200 SANSOME ST",
+    "latitude": "37.7912",
+    "longitude": "-122.4015"
+  }
+]
+

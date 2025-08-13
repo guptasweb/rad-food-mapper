@@ -8,6 +8,7 @@ type SidebarProps = {
   width?: number;
 };
 
+// Permanent MUI drawer for switching search modes; highlights active and exposes API docs link
 export default function Sidebar({ mode, onChange, width = 260 }: SidebarProps) {
   return (
     <Drawer

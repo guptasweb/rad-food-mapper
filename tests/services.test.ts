@@ -34,8 +34,7 @@ describe('foodTrucksService', () => {
   it('findNearest defaults to APPROVED and orders by distance', async () => {
     await findNearest({ lat: 37.78, lng: -122.41, limit: 5 });
     const call = getMock.mock.calls[0][1];
-    expect(call.params.$where).toContain("latitude like '37.%'");
-    expect(call.params.$where).toContain("longitude like '-122.%'");
+    expect(call.params.$where).toContain('within_box(location, 38, -123, 37, -122)');
     expect(call.params.$order).toBe('applicant ASC');
     expect(call.params.$limit).toBe('5');
   });
@@ -59,19 +58,17 @@ describe('foodTrucksService', () => {
     expect(call.params.$where).not.toContain('status =');
   });
 
-  it('findNearest numeric prefix match for positive/negative coords', async () => {
+  it('findNearest degree band box for positive/negative coords', async () => {
     await findNearest({ lat: 37.78, lng: -122.41, limit: 10, status: 'ALL' });
     let call = getMock.mock.calls[0][1];
     let where: string = call.params.$where;
-    expect(where).toContain("latitude like '37.%'");
-    expect(where).toContain("longitude like '-122.%'");
+    expect(where).toContain('within_box(location, 38, -123, 37, -122)');
 
     getMock.mockClear();
     await findNearest({ lat: -37.2, lng: 122.9, limit: 10 });
     call = getMock.mock.calls[0][1];
     where = call.params.$where;
-    expect(where).toContain("latitude like '-37.%'");
-    expect(where).toContain("longitude like '122.%'");
+    expect(where).toContain('within_box(location, -37, 122, -38, 123)');
   });
 });
 

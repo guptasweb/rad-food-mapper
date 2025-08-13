@@ -103,6 +103,7 @@ npm --prefix client run test:e2e:open   # Cypress UI runner
   - Comprehensive E2E stubbing of all API paths and visual regression tests
   - Geolocation via Google Maps (Places Autocomplete/Geocoding) to power latitude/longitude lookup
   - Pagination (API and UI) for large result sets and better perceived performance
+  - Typeahead/autocomplete inputs with debounced queries and dynamic results display while typing
 
 
 - What would you have done differently with more time?

@@ -1,6 +1,6 @@
 describe('SF Food Mapper UI', () => {
   beforeEach(() => {
-    // Stub streets and nearest to avoid timeouts/flaky upstream
+    // Stubbing streets and nearest to avoid timeouts/flaky upstream
     cy.intercept('GET', '/api/v1/streets*', { fixture: 'street-empty.json' }).as('streets');
     cy.intercept('GET', '/api/v1/nearest*', { fixture: 'nearest-empty.json' }).as('nearest');
     // Let applicants pass through or stub per-test as needed

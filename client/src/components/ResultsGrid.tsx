@@ -8,6 +8,7 @@ type ResultsGridProps = {
   error: string | null;
 };
 
+// Displays results in a responsive, resizable grid with sticky header, empty/loading/error states
 export default function ResultsGrid({ results, loading, error }: ResultsGridProps) {
   // Column widths in pixels for desktop grid: [#, Applicant, Status, Address, Lat, Lng, Distance]
   const [colWidths, setColWidths] = useState<number[]>([56, 240, 140, 320, 120, 120, 140]);
@@ -16,6 +17,7 @@ export default function ResultsGrid({ results, loading, error }: ResultsGridProp
 
   const gridStyle = useMemo(() => ({ gridTemplateColumns: colWidths.map((w) => `${w}px`).join(' ') }), [colWidths]);
 
+  // Begin column resize; track starting mouse X and width
   function onResizeStart(e: React.MouseEvent, index: number) {
     e.preventDefault();
     e.stopPropagation();
@@ -25,6 +27,7 @@ export default function ResultsGrid({ results, loading, error }: ResultsGridProp
     document.body.style.cursor = 'col-resize';
   }
 
+  // Resize handler updating the active column width, respecting a minimum per column
   function onResizing(e: MouseEvent) {
     if (!resizingRef.current) return;
     const { index, startX, startWidth } = resizingRef.current;
@@ -33,6 +36,7 @@ export default function ResultsGrid({ results, loading, error }: ResultsGridProp
     setColWidths((prev) => prev.map((w, i) => (i === index ? next : w)));
   }
 
+  // Cleanup after resize and restore cursor
   function onResizeEnd() {
     resizingRef.current = null;
     document.removeEventListener('mousemove', onResizing);

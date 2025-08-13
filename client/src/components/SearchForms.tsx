@@ -23,6 +23,7 @@ type Props = {
   onNearestSubmit: (e: React.FormEvent) => void;
 };
 
+// Renders one of three search forms based on the active mode; delegates state via props and emits submit events
 export default function SearchForms(props: Props) {
   const statuses = ['', 'APPROVED', 'REQUESTED', 'EXPIRED', 'SUSPEND', 'ALL'] as const;
   return (
