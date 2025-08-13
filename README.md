@@ -1,13 +1,10 @@
 # SF Food Mapper
 
-Backend + Frontend solution to search San Francisco Mobile Food Facilities using the official Open Data dataset.
+Frontend solution to search San Francisco Mobile Food Facilities using the official Open Data dataset.
 
 ## What it does
 
 - Backend (Node + TypeScript + Express)
-  - Search by applicant name with optional `status` (defaults to all unless provided)
-  - Search by street fragment (address-only matching)
-  - Find nearest trucks given `lat`/`lng` (default `APPROVED` only, overrideable); optional `coarse=true` to match integer degree bands for broader results
   - Swagger UI at `/docs`
   - Jest unit tests (services + controllers)
 
