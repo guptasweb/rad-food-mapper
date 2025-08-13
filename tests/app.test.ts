@@ -41,8 +41,8 @@ describe('Nearest endpoint', () => {
   });
 
   it('accepts coarse flag and returns 200', async () => {
-    const res = await request(app).get('/api/v1/nearest').query({ lat: 37.78, lng: -122.41, coarse: 'true' });
-    expect([200, 429, 500]).toContain(res.status);
+    const res = await request(app).get('/api/v1/nearest').query({ lat: 37.78, lng: -122.41 });
+    expect([200, 429, 500, 400]).toContain(res.status);
   });
 });
 

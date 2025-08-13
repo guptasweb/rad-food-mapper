@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '../App';
 
@@ -21,9 +21,10 @@ describe('App integration (frontend unit tests)', () => {
     } as any);
 
     render(<App />);
-    const input = screen.getByLabelText(/Applicant name/i);
+    const form = screen.getByTestId('form-applicant');
+    const input = within(form).getByLabelText(/Applicant name/i);
     await user.type(input, 'TACO');
-    await user.click(screen.getByRole('button', { name: /search/i }));
+    await user.click(within(form).getByRole('button', { name: /search/i }));
 
     await waitFor(() => expect(screen.getByTestId('results-count')).toHaveTextContent('1'));
   });
@@ -33,9 +34,10 @@ describe('App integration (frontend unit tests)', () => {
     vi.spyOn(global, 'fetch').mockResolvedValue({ ok: false, status: 500 } as any);
 
     render(<App />);
-    const input = screen.getByLabelText(/Applicant name/i);
+    const form = screen.getByTestId('form-applicant');
+    const input = within(form).getByLabelText(/Applicant name/i);
     await user.type(input, 'ANY');
-    await user.click(screen.getByRole('button', { name: /search/i }));
+    await user.click(within(form).getByRole('button', { name: /search/i }));
 
     await waitFor(() => expect(screen.getByRole('alert')).toBeInTheDocument());
     expect(screen.getByRole('alert')).toHaveTextContent('HTTP 500');

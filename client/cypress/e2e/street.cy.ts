@@ -5,13 +5,10 @@ describe('Street search', () => {
 
   it('gibberish returns empty state', () => {
     // Stub the API to ensure deterministic empty response
-    cy.intercept('GET', '/api/v1/streets*', (req) => {
-      const q = (req.query as any)?.query || '';
-      if (String(q).includes('THISISNOTASTREET')) {
-        req.reply([]);
-      }
-    }).as('street');
+    // Use project-level fixtures path (client/cypress/fixtures)
+    cy.intercept('GET', '/api/v1/streets*', { fixture: 'street-empty.json' }).as('street');
 
+    cy.get('[data-testid="nav-street"]').click();
     cy.get('[data-testid="form-street"]').within(() => {
       cy.get('[data-testid="input-street"]').type('THISISNOTASTREET');
       cy.get('button[type="submit"]').click();

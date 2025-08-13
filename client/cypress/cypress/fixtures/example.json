@@ -1,5 +1,21 @@
 {
-  "name": "Using fixtures to represent data",
-  "email": "hello@cypress.io",
-  "body": "Fixtures are a great way to mock data for responses to routes"
+  "empty": [],
+  "streetSample": [
+    {
+      "applicant": "TASTY TACOS",
+      "status": "APPROVED",
+      "address": "123 SANSOME ST",
+      "latitude": "37.7901",
+      "longitude": "-122.4010"
+    }
+  ],
+  "nearestSample": [
+    {
+      "applicant": "BURGER BUS",
+      "status": "APPROVED",
+      "address": "1 MARKET ST",
+      "latitude": "37.7940",
+      "longitude": "-122.3940"
+    }
+  ]
 }

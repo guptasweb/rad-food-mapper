@@ -23,7 +23,14 @@ function cacheKey(url: string, params: Record<string, unknown>): string {
 let sharedClient: AxiosInstance | null = null;
 // Lazily create and reuse a single Socrata axios client
 function getClient(): AxiosInstance {
-  if (sharedClient) return sharedClient;
+  // In tests, always create a fresh client so jest mocks are picked up
+  if (process.env.NODE_ENV === 'test') {
+    const headers: Record<string, string> = {};
+    if (APP_TOKEN) headers['X-App-Token'] = APP_TOKEN;
+    return axios.create({ baseURL: SODA_BASE, headers, timeout: 10000 });
+  }
+  // Reuse a single client instance in non-test environments
+  if (sharedClient && typeof (sharedClient as any).get === 'function') return sharedClient;
   const headers: Record<string, string> = {};
   if (APP_TOKEN) headers['X-App-Token'] = APP_TOKEN;
   sharedClient = axios.create({ baseURL: SODA_BASE, headers, timeout: 10000 });
@@ -116,16 +123,14 @@ export async function findNearest(params: NearestParams): Promise<FoodTruck[]> {
   const statusFilter = normalizedStatus === 'ALL' ? '' : `status = '${escapeSql(normalizedStatus)}' AND `;
   const limit = clampLimit(params.limit);
 
-  // Simple numeric match on integer degree bands for latitude/longitude
-  const latInt = Math.trunc(params.lat);
-  const lngInt = Math.trunc(params.lng);
-  const latRange = latInt >= 0
-    ? `(to_number(latitude) >= ${latInt} AND to_number(latitude) < ${latInt + 1})`
-    : `(to_number(latitude) > ${latInt - 1} AND to_number(latitude) <= ${latInt})`;
-  const lngRange = lngInt >= 0
-    ? `(to_number(longitude) >= ${lngInt} AND to_number(longitude) < ${lngInt + 1})`
-    : `(to_number(longitude) > ${lngInt - 1} AND to_number(longitude) <= ${lngInt})`;
-  const where = `${statusFilter}${latRange} AND ${lngRange}`;
+  // Geospatial degree band using within_box on the location field (1° box)
+  const latTrunc = Math.trunc(params.lat);
+  const lngTrunc = Math.trunc(params.lng);
+  const latLower = params.lat >= 0 ? latTrunc : latTrunc - 1;
+  const latUpper = params.lat >= 0 ? latTrunc + 1 : latTrunc;
+  const lngLower = params.lng >= 0 ? lngTrunc : lngTrunc - 1;
+  const lngUpper = params.lng >= 0 ? lngTrunc + 1 : lngTrunc;
+  const where = `${statusFilter}within_box(location, ${latUpper}, ${lngLower}, ${latLower}, ${lngUpper})`;
   return fetchTrucks({ where, order: 'applicant ASC', limit });
 }
 

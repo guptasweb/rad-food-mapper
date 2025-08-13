@@ -8,18 +8,20 @@ describe('foodTrucksService', () => {
 
   beforeEach(() => {
     getMock = jest.fn().mockResolvedValue({ data: [] });
-    (axios.create as unknown as jest.Mock).mockReturnValue({ get: getMock });
+    const fakeClient = { get: getMock } as any;
+    (axios.create as unknown as jest.Mock).mockReturnValue(fakeClient);
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
   });
 
-  it('searchByApplicant builds where with name and status', async () => {
+  it('searchByApplicant builds where with name and status (order agnostic)', async () => {
     await searchByApplicant({ name: 'taco', status: 'APPROVED' });
-    expect(getMock).toHaveBeenCalledWith('', expect.objectContaining({
-      params: expect.objectContaining({ $where: expect.stringContaining("upper(applicant) like upper('%taco%') AND status = 'APPROVED'") }),
-    }));
+    const call = getMock.mock.calls[0][1];
+    const where: string = call.params.$where;
+    expect(where).toContain("upper(applicant) like upper('%taco%')");
+    expect(where).toContain("status = 'APPROVED'");
   });
 
   it('searchByStreet queries address and locationdescription', async () => {
@@ -32,8 +34,8 @@ describe('foodTrucksService', () => {
   it('findNearest defaults to APPROVED and orders by distance', async () => {
     await findNearest({ lat: 37.78, lng: -122.41, limit: 5 });
     const call = getMock.mock.calls[0][1];
-    expect(call.params.$where).toContain('to_number(latitude)');
-    expect(call.params.$where).toContain('to_number(longitude)');
+    expect(call.params.$where).toContain("latitude like '37.%'");
+    expect(call.params.$where).toContain("longitude like '-122.%'");
     expect(call.params.$order).toBe('applicant ASC');
     expect(call.params.$limit).toBe('5');
   });
@@ -57,19 +59,19 @@ describe('foodTrucksService', () => {
     expect(call.params.$where).not.toContain('status =');
   });
 
-  it('findNearest numeric ranges for positive/negative coords', async () => {
+  it('findNearest numeric prefix match for positive/negative coords', async () => {
     await findNearest({ lat: 37.78, lng: -122.41, limit: 10, status: 'ALL' });
     let call = getMock.mock.calls[0][1];
     let where: string = call.params.$where;
-    expect(where).toContain('(to_number(latitude) >= 37 AND to_number(latitude) < 38)');
-    expect(where).toContain('(to_number(longitude) > -123 AND to_number(longitude) <= -122)');
+    expect(where).toContain("latitude like '37.%'");
+    expect(where).toContain("longitude like '-122.%'");
 
     getMock.mockClear();
     await findNearest({ lat: -37.2, lng: 122.9, limit: 10 });
     call = getMock.mock.calls[0][1];
     where = call.params.$where;
-    expect(where).toContain('(to_number(latitude) > -38 AND to_number(latitude) <= -37)');
-    expect(where).toContain('(to_number(longitude) >= 122 AND to_number(longitude) < 123)');
+    expect(where).toContain("latitude like '-37.%'");
+    expect(where).toContain("longitude like '122.%'");
   });
 });
 

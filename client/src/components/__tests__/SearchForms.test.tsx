@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import SearchForms from '../../components/SearchForms';
 
@@ -42,10 +42,12 @@ describe('SearchForms', () => {
         onApplicantSubmit={onSubmit}
       />
     );
-    const input = screen.getByTestId('input-applicant');
+    const form = screen.getByTestId('form-applicant');
+    const input = within(form).getByTestId('input-applicant');
     await user.type(input, 'TACO');
     expect(onChange).toHaveBeenCalled();
-    await user.click(screen.getByRole('button', { name: /search/i }));
+    // Submit the form to ensure onSubmit is invoked
+    fireEvent.submit(form);
     expect(onSubmit).toHaveBeenCalled();
   });
 
