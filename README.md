@@ -2,6 +2,8 @@
 
 Frontend solution to search San Francisco Mobile Food Facilities using the official Open Data dataset.
 
+![rad](rad.JPG)
+
 ## What it does
 
 - Backend (Node + TypeScript + Express)
